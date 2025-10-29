@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dink & Dine Greeter Training Platform</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background-color: #FFFCDE;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .auth-container {
+            max-width: 500px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #07414D;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #07414D;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: Arial, sans-serif;
+        }
+        .module-card {
+            background-color: white;
+            padding: 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            position: relative;
+            margin-bottom: 16px;
+        }
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        .header-stats {
+            background: linear-gradient(135deg, #07414D 0%, #113F60 100%);
+            padding: 32px 24px;
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .daily-challenge {
+            background-color: #FFDE17;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .btn {
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+            color: white;
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-primary {
+            background-color: #E05211;
+        }
+        .btn-secondary {
+            background-color: #07414D;
+        }
+        .btn-success {
+            background-color: #113F60;
+        }
+        .btn-back {
+            background-color: #FFFCDE;
+            color: #07414D;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+        }
+        .module-header {
+            background: linear-gradient(135deg, #E05211 0%, #113F60 100%);
+            padding: 32px;
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .module-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        .key-point {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding: 12px;
+            background-color: #FFFCDE;
+            border-radius: 8px;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #FFDE17 0%, #E05211 100%);
+            padding: 20px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            z-index: 10000;
+            animation: slideInRight 0.5s ease-out;
+            max-width: 350px;
+            color: #07414D;
+            font-weight: bold;
+        }
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .leaderboard-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .leaderboard-rank {
+            font-size: 32px;
+            font-weight: bold;
+            color: #E05211;
+            min-width: 50px;
+            text-align: center;
+        }
+        .leaderboard-rank.gold {
+            color: #FFDE17;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .leaderboard-rank.silver {
+            color: #C0C0C0;
+        }
+        .leaderboard-rank.bronze {
+            color: #CD7F32;
+        }
+        .quiz-option {
+            padding: 20px;
+            background-color: #FFFCDE;
+            border: 2px solid #07414D;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+        .quiz-option:hover {
+            background-color: #FFDE17;
+            transform: translateX(5px);
+        }
+        .quiz-option.correct {
+            background-color: #90EE90;
+            border-color: #228B22;
+        }
+        .quiz-option.incorrect {
+            background-color: #FFB6C1;
+            border-color: #DC143C;
+        }
+        .nav-bar {
+            background: linear-gradient(135deg, #07414D 0%, #113F60 100%);
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .nav-link.active {
+            background-color: #E05211;
+        }
+        .questionnaire-question {
+            background: #FFFCDE;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #E05211;
+        }
+        .progress-bar {
+            background-color: #FFFCDE;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #E05211 0%, #FFDE17 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+        .badge-showcase {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .badge {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: #07414D;
+        }
+        .hidden {
+            display: none;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        // Brand Colors
+        const colors = {
+            teal: '#07414D',
+            orange: '#E05211',
+            yellow: '#FFDE17',
+            paprika: '#AD2300',
+            sage: '#113F60',
+            cream: '#FFFCDE'
+        };
+
+        // Enhanced Training Data
+        const trainingModules = [
+            { 
+                id: 'vibe', 
+                title: 'Set The Vibe', 
+                icon: '✨', 
+                color: colors.yellow,
+                points: 50,
+                questionnaire: [
+                    { 
+                        q: 'Describe a time when your positive energy influenced a guest\'s experience. What did you do specifically?',
+                        type: 'text',
+                        minWords: 30
+                    },
+                    { 
+                        q: 'What does "spirited, friendly, inclusive, upbeat" mean to you in practice?',
+                        type: 'text',
+                        minWords: 25
+                    },
+                    {
+                        q: 'How quickly should you acknowledge a guest when they enter?',
+                        type: 'multiple',
+                        options: ['Within 10 seconds', 'Within 3 seconds', 'Within 1 minute', 'When they reach the desk'],
+                        correct: 'Within 3 seconds'
+                    }
+                ],
+                content: {
+                    keyPoints: [
+                        "You're the FIRST impression - the face of the Park",
+                        "Dink & Dine energy = spirited, friendly, inclusive, upbeat",
+                        "Every smile, every greeting sets the tone"
+                    ],
+                    proTips: [
+                        "Make eye contact and smile BEFORE they reach the desk",
+                        "Use their name once you learn it - it personalizes everything",
+                        "Your energy is contagious - bring the excitement!"
+                    ]
+                }
+            },
+            { 
+                id: 'pricing', 
+                title: 'Pricing Mastery', 
+                icon: '💰', 
+                color: colors.teal,
+                points: 75,
+                questionnaire: [
+                    { 
+                        q: 'What is the prime time hourly rate?',
+                        type: 'multiple',
+                        options: ['$30/hr', '$35/hr', '$40/hr', '$45/hr'],
+                        correct: '$40/hr'
+                    },
+                    {
+                        q: 'When does prime time pricing apply?',
+                        type: 'multiple',
+                        options: ['All weekends', 'Fri 5pm–Sun 8pm + evenings', 'Only Saturdays', 'Weekday evenings only'],
+                        correct: 'Fri 5pm–Sun 8pm + evenings'
+                    },
+                    {
+                        q: 'A guest complains about the $40 rate. Write your exact response to turn this into a positive conversation.',
+                        type: 'text',
+                        minWords: 40
+                    }
+                ],
+                content: {
+                    pricing: [
+                        { type: 'Prime Time', rate: '$40/hr', when: 'Fri 5pm–Sun 8pm + evenings' },
+                        { type: 'Non-Peak', rate: '$20/hr', when: 'Sun 8pm–Wed; weekday mornings' },
+                        { type: 'Monthly Pass', rate: '$149/mo', when: 'Unlimited play + priority booking' }
+                    ]
+                }
+            },
+            { 
+                id: 'upsell', 
+                title: 'Sales Master Class', 
+                icon: '🍔', 
+                color: colors.orange,
+                points: 150,
+                questionnaire: [
+                    {
+                        q: 'Write your pitch to a guest who just finished playing pickleball and is about to leave. How do you get them to stay for food?',
+                        type: 'text',
+                        minWords: 50
+                    },
+                    {
+                        q: 'List 3 specific menu items you would recommend and why',
+                        type: 'text',
+                        minWords: 40
+                    },
+                    {
+                        q: 'What percentage of guests should you attempt a food upsell with?',
+                        type: 'multiple',
+                        options: ['Only if they ask', '50%', '100%', 'Only during meal times'],
+                        correct: '100%'
+                    },
+                    {
+                        q: 'A family is dining but hasn\'t mentioned pickleball. What\'s your approach?',
+                        type: 'text',
+                        minWords: 35
+                    }
+                ],
+                content: {
+                    strategies: [
+                        {
+                            situation: 'Guest is playing pickleball',
+                            suggestion: 'Grab a burger & drink after your match! Kitchen is open and patio is perfect.'
+                        },
+                        {
+                            situation: 'Guest is only dining',
+                            suggestion: 'Try a quick match - courts are open! Play then eat, or eat then play!'
+                        },
+                        {
+                            situation: 'Guest mentions birthday/event',
+                            suggestion: 'We host events from 10-1000 people - want me to connect you with our team?'
+                        }
+                    ]
+                }
+            },
+            { 
+                id: 'sweeps', 
+                title: 'Court Management Pro', 
+                icon: '⏰', 
+                color: colors.paprika,
+                points: 100,
+                questionnaire: [
+                    {
+                        q: 'How often should you do court sweeps?',
+                        type: 'multiple',
+                        options: ['Every 30 minutes', 'Every hour', 'Every 2 hours', 'Only when someone complains'],
+                        correct: 'Every hour'
+                    },
+                    {
+                        q: 'Guests have been on the court 20 minutes past their time and someone is waiting. Write EXACTLY what you say.',
+                        type: 'text',
+                        minWords: 40
+                    },
+                    {
+                        q: 'The court is available and guests want to keep playing. What do you do?',
+                        type: 'text',
+                        minWords: 30
+                    }
+                ],
+                content: {
+                    approach: [
+                        'Check in at the top of each hour',
+                        'If court is available: "Great news! The court\'s still available - would you like to extend?"',
+                        'If someone is waiting: "Your hour is wrapping up and we have folks waiting. Can I book your next session?"',
+                        'Always offer value: "While you cool down, want to grab a drink or snack?"'
+                    ]
+                }
+            },
+            { 
+                id: 'lessons', 
+                title: 'Lesson Booking Expert', 
+                icon: '🎓', 
+                color: colors.yellow,
+                points: 80,
+                questionnaire: [
+                    {
+                        q: 'Walk through the complete lesson booking process step by step',
+                        type: 'text',
+                        minWords: 60
+                    },
+                    {
+                        q: 'What information must you enter in Court Reserve?',
+                        type: 'text',
+                        minWords: 30
+                    },
+                    {
+                        q: 'A guest asks "Are lessons worth it?" What do you say?',
+                        type: 'text',
+                        minWords: 35
+                    }
+                ],
+                content: {
+                    process: [
+                        'Identify interest: "Are you new to pickleball? We have amazing instructors!"',
+                        'Enter ALL guest info in Court Reserve',
+                        'Confirm instructor and time',
+                        'Follow up: "You\'re all set! Your instructor meets you at Court [X]."'
+                    ]
+                }
+            }
+        ];
+
+        const quizzes = [
+            {
+                id: 'fundamentals',
+                title: 'Greeter Fundamentals',
+                icon: '📚',
+                points: 100,
+                questions: [
+                    { 
+                        q: 'What is the non-peak hourly rate?', 
+                        a: '$20/hr', 
+                        options: ['$15/hr', '$20/hr', '$25/hr', '$30/hr'] 
+                    },
+                    { 
+                        q: 'How often should you do court sweeps?', 
+                        a: 'Every hour', 
+                        options: ['Every 30 min', 'Every hour', 'Every 2 hours', 'Only when busy'] 
+                    },
+                    { 
+                        q: 'What\'s the monthly pass price?', 
+                        a: '$149/mo', 
+                        options: ['$99/mo', '$129/mo', '$149/mo', '$199/mo'] 
+                    },
+                    { 
+                        q: 'What should you say to a guest only playing pickleball?', 
+                        a: 'Suggest grabbing food after their match', 
+                        options: ['Nothing', 'Suggest grabbing food after their match', 'Ask if they need lessons', 'Tell them about prime time pricing'] 
+                    },
+                    {
+                        q: 'What\'s the 3-Second / 10-Foot / 3-Step Rule?',
+                        a: 'Eye contact in 3 sec, approach within 10 feet, Acknowledge→Engage→Elevate',
+                        options: [
+                            'Eye contact in 3 sec, approach within 10 feet, Acknowledge→Engage→Elevate',
+                            'Greet in 3 words, stand 10 feet away, take 3 steps',
+                            'Wait 3 seconds, walk 10 feet, use 3-step process',
+                            'None of the above'
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'advanced-sales',
+                title: 'Advanced Sales Techniques',
+                icon: '💎',
+                points: 150,
+                questions: [
+                    {
+                        q: 'What percentage of pickleball players should you attempt a food upsell with?',
+                        a: '100% - every single one',
+                        options: ['25%', '50%', '75%', '100% - every single one']
+                    },
+                    {
+                        q: 'When is the BEST time to mention the monthly pass?',
+                        a: 'When they ask about pricing or book their 2nd session',
+                        options: [
+                            'Only when they ask',
+                            'When they ask about pricing or book their 2nd session',
+                            'Never mention it unless they bring it up',
+                            'Only to people who look wealthy'
+                        ]
+                    },
+                    {
+                        q: 'A guest says "We\'re just here to play, not eat." What should you do?',
+                        a: 'Smile, acknowledge, plant the seed: "Sounds good! Just so you know, kitchen is open after if you change your mind!"',
+                        options: [
+                            'Give up and move on',
+                            'Push harder and list menu items',
+                            'Smile, acknowledge, plant the seed: "Sounds good! Just so you know, kitchen is open after if you change your mind!"',
+                            'Feel offended and show it'
+                        ]
+                    },
+                    {
+                        q: 'What\'s the most important thing when selling the Dink & Dine experience?',
+                        a: 'Paint the picture of the complete experience - court action + tableside satisfaction',
+                        options: [
+                            'Memorize menu prices',
+                            'Paint the picture of the complete experience - court action + tableside satisfaction',
+                            'Talk fast before they can say no',
+                            'Only focus on pickleball'
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'customer-service',
+                title: 'Customer Service Excellence',
+                icon: '⭐',
+                points: 125,
+                questions: [
+                    {
+                        q: 'A guest is visibly upset. What\'s your FIRST action?',
+                        a: 'Listen fully, make eye contact, show empathy',
+                        options: [
+                            'Defend the company policy',
+                            'Listen fully, make eye contact, show empathy',
+                            'Get your manager immediately',
+                            'Offer them a discount'
+                        ]
+                    },
+                    {
+                        q: 'What does "Acknowledge → Engage → Elevate" mean?',
+                        a: 'Greet them → Start conversation → Enhance their experience',
+                        options: [
+                            'See them → Talk to them → Sell to them',
+                            'Greet them → Start conversation → Enhance their experience',
+                            'Notice → Ignore → Upsell',
+                            'Wave → Chat → Leave'
+                        ]
+                    },
+                    {
+                        q: 'How far away should you be to approach a guest who looks unsure?',
+                        a: '10 feet',
+                        options: ['5 feet', '10 feet', '15 feet', '20 feet']
+                    },
+                    {
+                        q: 'The phone rings while you\'re helping a guest in person. What do you do?',
+                        a: 'Excuse yourself politely to the in-person guest, answer quickly, and return focus to them',
+                        options: [
+                            'Ignore the phone',
+                            'Answer immediately and make the in-person guest wait',
+                            'Excuse yourself politely to the in-person guest, answer quickly, and return focus to them',
+                            'Let it go to voicemail always'
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        const rolePlayScenarios = [
+            {
+                id: 1,
+                title: 'The Pickleball-Only Player',
+                situation: 'Guest books a court but shows zero interest in food/drinks. They\'re in athletic gear and seem focused only on playing.',
+                challenge: 'Get them to consider the full Dink & Dine experience without being pushy',
+                prompt: 'Write EXACTLY what you would say to this guest (minimum 50 words). Describe your approach, timing, and specific language.',
+                points: 100,
+                tips: [
+                    'Paint the picture of post-game relaxation',
+                    'Make a specific menu suggestion',
+                    'Mention the patio/atmosphere',
+                    'Be casual, not salesy'
+                ]
+            },
+            {
+                id: 2,
+                title: 'The Price Complaint',
+                situation: 'Guest is shocked at the $40 prime time rate and says "That\'s way too expensive! It used to be $20!"',
+                challenge: 'Turn the conversation positive, acknowledge their concern, and either keep the booking or suggest alternatives',
+                prompt: 'Write your complete response word-for-word (minimum 60 words). How do you handle this?',
+                points: 120,
+                tips: [
+                    'Acknowledge their feelings first',
+                    'Explain the value of prime time',
+                    'Offer non-peak alternatives',
+                    'Mention monthly pass if they visit often'
+                ]
+            },
+            {
+                id: 3,
+                title: 'The Overstayer',
+                situation: 'Court sweep time - guests have been playing 15 minutes past their hour. Someone is waiting for the court and starting to look impatient.',
+                challenge: 'Get them off the court politely while maintaining positive vibes',
+                prompt: 'Write exactly what you say when you approach them (minimum 40 words). Then write your follow-up actions.',
+                points: 90,
+                tips: [
+                    'Start positive',
+                    'Be clear about the situation',
+                    'Offer to book their next session',
+                    'Redirect to food/drinks'
+                ]
+            },
+            {
+                id: 4,
+                title: 'The Birthday Party Inquiry',
+                situation: 'Phone rings. Caller asks "Do you guys do birthday parties?" It\'s for their 10-year-old, about 15 kids.',
+                challenge: 'Capture all details, make them excited, and connect them to events team',
+                prompt: 'Write the entire phone conversation from your greeting to handoff (minimum 80 words).',
+                points: 130,
+                tips: [
+                    'Great phone greeting',
+                    'Ask key questions (date, time, age, count)',
+                    'Paint picture of the experience',
+                    'Make warm handoff to events'
+                ]
+            },
+            {
+                id: 5,
+                title: 'The Dining-Only Family',
+                situation: 'A family of 4 comes in for dinner. They don\'t mention pickleball at all. They\'re dressed casually and the kids (around 8-12 years old) are looking around curiously.',
+                challenge: 'Plant the pickleball seed and potentially get them to add a court booking',
+                prompt: 'Describe your approach and write what you\'d say (minimum 50 words).',
+                points: 110,
+                tips: [
+                    'Timing is key - maybe after they order?',
+                    'Connect with the kids first',
+                    'Make it sound fun and easy',
+                    'Offer to show them the courts'
+                ]
+            },
+            {
+                id: 6,
+                title: 'The Paddle Rental Resistance',
+                situation: 'Guest is surprised there\'s a paddle rental fee and says "Really? I have to pay extra just to rent a paddle?"',
+                challenge: 'Keep it positive, justify the value, and close the rental',
+                prompt: 'Write your response (minimum 35 words). How do you keep their energy up?',
+                points: 75,
+                tips: [
+                    'Don\'t apologize',
+                    'Emphasize quality equipment',
+                    'Mention paddle purchase option',
+                    'Keep it brief and confident'
+                ]
+            }
+        ];
+
+        // User Management
+        class UserManager {
+            constructor() {
+                this.currentUser = null;
+                this.users = this.loadUsers();
+            }
+
+            loadUsers() {
+                const stored = localStorage.getItem('ddTrainingUsers');
+                return stored ? JSON.parse(stored) : [];
+            }
+
+            saveUsers() {
+                localStorage.setItem('ddTrainingUsers', JSON.stringify(this.users));
+            }
+
+            register(name, email) {
+                if (this.users.find(u => u.email === email)) {
+                    return { success: false, message: 'Email already registered' };
+                }
+
+                const user = {
+                    id: Date.now().toString(),
+                    name,
+                    email,
+                    points: 0,
+                    completedModules: [],
+                    completedQuizzes: [],
+                    completedScenarios: [],
+                    badges: ['🌱 Newbie'],
+                    joinedAt: new Date().toISOString(),
+                    submissions: []
+                };
+
+                this.users.push(user);
+                this.saveUsers();
+                this.currentUser = user;
+                return { success: true, user };
+            }
+
+            login(email) {
+                const user = this.users.find(u => u.email === email);
+                if (user) {
+                    this.currentUser = user;
+                    return { success: true, user };
+                }
+                return { success: false, message: 'User not found' };
+            }
+
+            logout() {
+                this.currentUser = null;
+            }
+
+            updateUser(updates) {
+                if (!this.currentUser) return;
+                
+                Object.assign(this.currentUser, updates);
+                const index = this.users.findIndex(u => u.id === this.currentUser.id);
+                if (index !== -1) {
+                    this.users[index] = this.currentUser;
+                    this.saveUsers();
+                }
+            }
+
+            addPoints(points, source) {
+                if (!this.currentUser) return;
+                
+                this.currentUser.points += points;
+                this.updateBadges();
+                this.saveUsers();
+                
+                // Show notification to all users
+                this.broadcastNotification(`${this.currentUser.name} earned ${points} points for ${source}! 🎉`);
+            }
+
+            updateBadges() {
+                const points = this.currentUser.points;
+                const badges = ['🌱 Newbie'];
+                
+                if (points >= 100) badges.push('⭐ Rising Star');
+                if (points >= 250) badges.push('🏆 Pro Greeter');
+                if (points >= 400) badges.push('👑 Master Greeter');
+                if (points >= 750) badges.push('🔥 Elite Legend');
+                if (this.currentUser.completedModules.length >= trainingModules.length) {
+                    badges.push('📚 Training Complete');
+                }
+                if (this.currentUser.completedQuizzes.length >= quizzes.length) {
+                    badges.push('🎯 Quiz Master');
+                }
+                if (this.currentUser.completedScenarios.length >= 3) {
+                    badges.push('🎭 Role Play Pro');
+                }
+                
+                this.currentUser.badges = badges;
+            }
+
+            broadcastNotification(message) {
+                // Store notification
+                const notifications = JSON.parse(localStorage.getItem('ddNotifications') || '[]');
+                notifications.push({
+                    message,
+                    timestamp: Date.now(),
+                    read: false
+                });
+                localStorage.setItem('ddNotifications', JSON.stringify(notifications));
+                
+                // Show visual notification
+                showNotification(message);
+            }
+
+            getLeaderboard() {
+                return this.users
+                    .sort((a, b) => b.points - a.points)
+                    .map((user, index) => ({
+                        ...user,
+                        rank: index + 1
+                    }));
+            }
+        }
+
+        const userManager = new UserManager();
+        let currentView = userManager.currentUser ? 'home' : 'auth';
+        let currentTab = 'training';
+        let currentModuleId = null;
+        let currentQuizId = null;
+        let currentScenarioId = null;
+        let currentQuizQuestion = 0;
+        let quizAnswers = [];
+
+        // UI Functions
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div style="font-size: 20px; margin-bottom: 8px;">🎉</div>
+                <div>${message}</div>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        function renderAuth() {
+            const isLogin = currentView === 'login';
+            return `
+                <div class="auth-container">
+                    <div style="text-align: center; margin-bottom: 32px;">
+                        <div style="font-size: 64px; margin-bottom: 16px;">🏓</div>
+                        <h1 style="color: ${colors.teal}; margin-bottom: 8px;">Dink & Dine Training</h1>
+                        <p style="color: ${colors.sage};">Level Up Your Greeter Game</p>
+                    </div>
+
+                    <div class="form-group">
+                        ${!isLogin ? `
+                            <label>Full Name</label>
+                            <input type="text" id="auth-name" placeholder="Enter your name" />
+                        ` : ''}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="auth-email" placeholder="your@email.com" />
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 16px;" onclick="handleAuth()">
+                        ${isLogin ? 'Login' : 'Sign Up'}
+                    </button>
+
+                    <div style="text-align: center;">
+                        <a href="#" style="color: ${colors.orange}; text-decoration: none;" onclick="toggleAuth()">
+                            ${isLogin ? 'Need an account? Sign up' : 'Already have an account? Login'}
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderNavBar() {
+            return `
+                <div class="nav-bar">
+                    <div>
+                        <div style="font-size: 20px; font-weight: bold;">👋 Hey, ${userManager.currentUser.name}!</div>
+                        <div style="font-size: 14px; opacity: 0.8;">🏆 ${userManager.currentUser.points} points</div>
+                    </div>
+                    <div class="nav-links">
+                        <span class="nav-link ${currentTab === 'training' ? 'active' : ''}" onclick="switchTab('training')">Training</span>
+                        <span class="nav-link ${currentTab === 'quizzes' ? 'active' : ''}" onclick="switchTab('quizzes')">Quizzes</span>
+                        <span class="nav-link ${currentTab === 'roleplay' ? 'active' : ''}" onclick="switchTab('roleplay')">Role Play</span>
+                        <span class="nav-link ${currentTab === 'leaderboard' ? 'active' : ''}" onclick="switchTab('leaderboard')">Leaderboard</span>
+                        <span class="nav-link" onclick="logout()">Logout</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTrainingHome() {
+            const user = userManager.currentUser;
+            const completionRate = (user.completedModules.length / trainingModules.length * 100).toFixed(0);
+
+            return `
+                ${renderNavBar()}
+
+                <div class="header-stats">
+                    <h1 style="margin: 0 0 8px 0; font-size: 28px;">Your Training Progress</h1>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${completionRate}%"></div>
+                    </div>
+                    <p style="margin: 12px 0 0 0; opacity: 0.9;">${user.completedModules.length} of ${trainingModules.length} modules completed (${completionRate}%)</p>
+
+                    <div class="badge-showcase">
+                        ${user.badges.map(badge => `<div class="badge">${badge}</div>`).join('')}
+                    </div>
+                </div>
+
+                <h2 style="color: ${colors.teal}; margin-bottom: 16px;">Training Modules</h2>
+                <p style="margin-bottom: 24px; color: ${colors.sage};">Complete the questionnaire for each module to earn points!</p>
+
+                ${trainingModules.map(module => {
+                    const isComplete = user.completedModules.includes(module.id);
+                    return `
+                        <div class="module-card" style="border-left: 6px solid ${module.color};" onclick="openModule('${module.id}')">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="flex: 1;">
+                                    <div style="font-size: 32px; margin-bottom: 8px;">${module.icon}</div>
+                                    <h3 style="margin: 0 0 8px 0; color: ${colors.teal};">${module.title}</h3>
+                                    <div style="display: flex; align-items: center; gap: 8px; color: #666;">
+                                        <span>⭐ ${module.points} points</span>
+                                        <span>•</span>
+                                        <span>${module.questionnaire.length} questions</span>
+                                    </div>
+                                </div>
+                                ${isComplete ? `<div style="font-size: 48px; color: ${colors.orange};">✓</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            `;
+        }
+
+        function renderModuleDetail(moduleId) {
+            const module = trainingModules.find(m => m.id === moduleId);
+            const user = userManager.currentUser;
+            const isComplete = user.completedModules.includes(moduleId);
+
+            return `
+                ${renderNavBar()}
+                <button class="btn btn-back" onclick="backToTraining()">← Back to Training</button>
+
+                <div class="module-header" style="background: linear-gradient(135deg, ${module.color} 0%, ${colors.sage} 100%);">
+                    <div style="font-size: 48px; margin-bottom: 12px;">${module.icon}</div>
+                    <h1 style="margin: 0 0 12px 0;">${module.title}</h1>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>⭐ ${module.points} points</span>
+                    </div>
+                </div>
+
+                ${module.content.keyPoints ? `
+                    <div class="module-content">
+                        <h3 style="color: ${colors.teal}; margin-bottom: 16px;">Key Points</h3>
+                        ${module.content.keyPoints.map(point => `
+                            <div class="key-point">
+                                <span style="color: ${module.color}; font-size: 20px;">•</span>
+                                <p style="margin: 0;">${point}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${module.content.pricing ? `
+                    <div class="module-content">
+                        <h3 style="color: ${colors.teal}; margin-bottom: 16px;">Pricing Reference</h3>
+                        ${module.content.pricing.map(item => `
+                            <div style="background-color: ${colors.cream}; padding: 16px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid ${module.color};">
+                                <div style="font-weight: bold; font-size: 18px; color: ${colors.teal};">${item.type}</div>
+                                <div style="font-size: 24px; font-weight: bold; color: ${module.color}; margin: 8px 0;">${item.rate}</div>
+                                <div style="font-size: 14px; color: #666;">${item.when}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${module.content.strategies ? `
+                    <div class="module-content">
+                        <h3 style="color: ${colors.teal}; margin-bottom: 16px;">Sales Strategies</h3>
+                        ${module.content.strategies.map(strategy => `
+                            <div style="background-color: ${colors.cream}; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+                                <div style="font-weight: bold; color: ${colors.sage}; margin-bottom: 8px;">
+                                    If they... ${strategy.situation}
+                                </div>
+                                <div style="color: ${module.color}; font-style: italic;">
+                                    💬 "${strategy.suggestion}"
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${module.content.proTips ? `
+                    <div class="module-content">
+                        <h3 style="color: ${colors.teal}; margin-bottom: 16px;">Pro Tips 💡</h3>
+                        ${module.content.proTips.map(tip => `
+                            <div style="background-color: ${colors.yellow}; padding: 16px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid ${colors.orange};">
+                                <p style="margin: 0; color: ${colors.sage}; font-weight: 500;">${tip}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${module.content.approach ? `
+                    <div class="module-content">
+                        <h3 style="color: ${colors.teal}; margin-bottom: 16px;">The Approach</h3>
+                        ${module.content.approach.map((step, idx) => `
+                            <div class="key-point" style="display: flex; gap: 12px;">
+                                <div style="background-color: ${module.color}; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: bold;">
+                                    ${idx + 1}
+                                </div>
+                                <p style="margin: 0;">${step}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                ${module.content.process ? `
+                    <div class="module-content">
+                        <h3 style="color: ${colors.teal}; margin-bottom: 16px;">The Process</h3>
+                        ${module.content.process.map((step, idx) => `
+                            <div class="key-point" style="display: flex; gap: 12px;">
+                                <div style="background-color: ${module.color}; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: bold;">
+                                    ${idx + 1}
+                                </div>
+                                <p style="margin: 0;">${step}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+
+                <div class="module-content">
+                    <h2 style="color: ${colors.teal}; margin-bottom: 24px;">📝 Complete the Questionnaire</h2>
+                    <p style="margin-bottom: 24px; color: ${colors.sage}; font-style: italic;">
+                        Answer all questions thoughtfully to earn ${module.points} points!
+                    </p>
+
+                    <form id="questionnaire-form" onsubmit="submitQuestionnaire(event, '${moduleId}')">
+                        ${module.questionnaire.map((question, idx) => `
+                            <div class="questionnaire-question">
+                                <h4 style="color: ${colors.teal}; margin-bottom: 12px;">Question ${idx + 1}</h4>
+                                <p style="margin-bottom: 16px; font-weight: 500;">${question.q}</p>
+                                
+                                ${question.type === 'text' ? `
+                                    <textarea 
+                                        name="q${idx}" 
+                                        required 
+                                        placeholder="Your answer here... (minimum ${question.minWords} words)"
+                                        style="width: 100%; min-height: 120px; padding: 12px; border: 2px solid ${colors.teal}; border-radius: 8px; font-size: 16px;"
+                                    ></textarea>
+                                    <div style="font-size: 12px; color: #666; margin-top: 4px;">Minimum ${question.minWords} words required</div>
+                                ` : `
+                                    ${question.options.map(option => `
+                                        <label style="display: block; padding: 12px; background: white; border: 2px solid ${colors.cream}; border-radius: 8px; margin-bottom: 8px; cursor: pointer;">
+                                            <input type="radio" name="q${idx}" value="${option}" required style="margin-right: 8px;" />
+                                            ${option}
+                                        </label>
+                                    `).join('')}
+                                `}
+                            </div>
+                        `).join('')}
+
+                        <button 
+                            type="submit" 
+                            class="btn btn-primary" 
+                            style="width: 100%; padding: 20px; font-size: 18px;"
+                            ${isComplete ? 'disabled' : ''}
+                        >
+                            ${isComplete ? '✓ Already Completed' : `Submit & Earn ${module.points} Points`}
+                        </button>
+                    </form>
+                </div>
+            `;
+        }
+
+        function renderQuizzes() {
+            const user = userManager.currentUser;
+
+            return `
+                ${renderNavBar()}
+
+                <div class="header-stats">
+                    <h1 style="margin: 0 0 8px 0; font-size: 28px;">Knowledge Quizzes</h1>
+                    <p style="margin: 0; opacity: 0.9;">Test your skills and earn bonus points!</p>
+                </div>
+
+                <div style="display: grid; gap: 16px;">
+                    ${quizzes.map(quiz => {
+                        const isComplete = user.completedQuizzes.includes(quiz.id);
+                        return `
+                            <div class="module-card" style="border-left: 6px solid ${colors.orange};" onclick="startQuiz('${quiz.id}')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 32px; margin-bottom: 8px;">${quiz.icon}</div>
+                                        <h3 style="margin: 0 0 8px 0; color: ${colors.teal};">${quiz.title}</h3>
+                                        <div style="display: flex; align-items: center; gap: 8px; color: #666;">
+                                            <span>⭐ ${quiz.points} points</span>
+                                            <span>•</span>
+                                            <span>${quiz.questions.length} questions</span>
+                                        </div>
+                                    </div>
+                                    ${isComplete ? `<div style="font-size: 48px; color: ${colors.orange};">✓</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function renderQuizDetail(quizId) {
+            const quiz = quizzes.find(q => q.id === quizId);
+            const question = quiz.questions[currentQuizQuestion];
+            const progress = ((currentQuizQuestion) / quiz.questions.length * 100);
+
+            return `
+                ${renderNavBar()}
+                <button class="btn btn-back" onclick="backToQuizzes()">← Back to Quizzes</button>
+
+                <div class="module-header" style="background: linear-gradient(135deg, ${colors.orange} 0%, ${colors.paprika} 100%);">
+                    <div style="font-size: 48px; margin-bottom: 12px;">${quiz.icon}</div>
+                    <h1 style="margin: 0 0 12px 0;">${quiz.title}</h1>
+                    <div style="font-size: 18px; opacity: 0.9;">
+                        Question ${currentQuizQuestion + 1} of ${quiz.questions.length}
+                    </div>
+                    <div class="progress-bar" style="margin-top: 16px;">
+                        <div class="progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                </div>
+
+                <div class="module-content">
+                    <h2 style="color: ${colors.teal}; margin-bottom: 24px;">${question.q}</h2>
+                    <div id="quiz-options">
+                        ${question.options.map((option, idx) => `
+                            <button class="quiz-option" onclick="answerQuiz('${quizId}', '${option}')" id="option-${idx}">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderQuizResults(quizId, score) {
+            const quiz = quizzes.find(q => q.id === quizId);
+            const percentage = (score / quiz.questions.length * 100);
+            const passed = percentage >= 80;
+
+            return `
+                ${renderNavBar()}
+
+                <div class="module-content" style="background: ${passed ? `linear-gradient(135deg, ${colors.yellow} 0%, ${colors.orange} 100%)` : colors.cream}; text-align: center; padding: 48px;">
+                    <div style="font-size: 64px; margin-bottom: 16px;">${passed ? '🏆' : '📚'}</div>
+                    <h1 style="margin: 0 0 16px 0; color: ${colors.teal};">
+                        ${passed ? 'Excellent Work!' : 'Keep Practicing!'}
+                    </h1>
+                    <div style="font-size: 48px; font-weight: bold; color: ${colors.orange}; margin-bottom: 16px;">
+                        ${score}/${quiz.questions.length}
+                    </div>
+                    <div style="font-size: 24px; font-weight: bold; color: ${colors.sage}; margin-bottom: 16px;">
+                        ${percentage.toFixed(0)}%
+                    </div>
+                    <p style="font-size: 18px; color: ${colors.sage}; margin-bottom: 24px;">
+                        ${passed ? `You earned ${quiz.points} points! 🎉` : 'You need 80% to pass. Review the training modules and try again!'}
+                    </p>
+                    
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" onclick="backToQuizzes()">
+                            ${passed ? 'Back to Quizzes' : 'Try Another Quiz'}
+                        </button>
+                        ${!passed ? `
+                            <button class="btn btn-secondary" onclick="startQuiz('${quizId}')">
+                                Retake Quiz
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    <div style="margin-top: 32px; padding-top: 24px; border-top: 2px solid ${colors.cream};">
+                        <h3 style="color: ${colors.teal}; margin-bottom: 16px;">Your Answers:</h3>
+                        ${quizAnswers.map((answer, idx) => {
+                            const question = quiz.questions[idx];
+                            const isCorrect = answer === question.a;
+                            return `
+                                <div style="text-align: left; background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid ${isCorrect ? '#90EE90' : '#FFB6C1'};">
+                                    <div style="font-weight: bold; margin-bottom: 8px;">${question.q}</div>
+                                    <div style="color: ${isCorrect ? '#228B22' : '#DC143C'};">
+                                        ${isCorrect ? '✓' : '✗'} Your answer: ${answer}
+                                    </div>
+                                    ${!isCorrect ? `<div style="color: #228B22; margin-top: 4px;">✓ Correct: ${question.a}</div>` : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRolePlay() {
+            const user = userManager.currentUser;
+
+            return `
+                ${renderNavBar()}
+
+                <div class="header-stats">
+                    <h1 style="margin: 0 0 8px 0; font-size: 28px;">Role Play Challenges</h1>
+                    <p style="margin: 0; opacity: 0.9;">Write your responses to real scenarios and earn points!</p>
+                </div>
+
+                <div style="background: ${colors.yellow}; padding: 20px; border-radius: 12px; margin-bottom: 24px;">
+                    <h3 style="margin: 0 0 8px 0; color: ${colors.teal};">💡 How It Works</h3>
+                    <p style="margin: 0; color: ${colors.sage};">
+                        Read each scenario carefully, then write exactly how you would handle it. Be specific! 
+                        Include your greeting, body language, tone, and exact words. The more detail, the better!
+                    </p>
+                </div>
+
+                <div style="display: grid; gap: 16px;">
+                    ${rolePlayScenarios.map(scenario => {
+                        const isComplete = user.completedScenarios.includes(scenario.id);
+                        return `
+                            <div class="module-card" style="border-left: 6px solid ${colors.paprika};" onclick="openScenario(${scenario.id})">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="flex: 1;">
+                                        <h3 style="margin: 0 0 8px 0; color: ${colors.teal};">${scenario.title}</h3>
+                                        <p style="margin: 0 0 12px 0; font-size: 14px; color: #666; line-height: 1.5;">
+                                            ${scenario.situation}
+                                        </p>
+                                        <div style="display: flex; align-items: center; gap: 8px; color: #666;">
+                                            <span>⭐ ${scenario.points} points</span>
+                                        </div>
+                                    </div>
+                                    ${isComplete ? `<div style="font-size: 48px; color: ${colors.orange};">✓</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function renderScenarioDetail(scenarioId) {
+            const scenario = rolePlayScenarios.find(s => s.id === scenarioId);
+            const user = userManager.currentUser;
+            const isComplete = user.completedScenarios.includes(scenarioId);
+
+            return `
+                ${renderNavBar()}
+                <button class="btn btn-back" onclick="backToRolePlay()">← Back to Role Play</button>
+
+                <div class="module-header" style="background: linear-gradient(135deg, ${colors.paprika} 0%, ${colors.orange} 100%);">
+                    <div style="font-size: 48px; margin-bottom: 12px;">🎭</div>
+                    <h1 style="margin: 0 0 12px 0;">${scenario.title}</h1>
+                    <div style="font-size: 18px; opacity: 0.9;">
+                        ⭐ Worth ${scenario.points} points
+                    </div>
+                </div>
+
+                <div class="module-content">
+                    <div style="background: ${colors.cream}; padding: 20px; border-radius: 12px; margin-bottom: 24px; border-left: 4px solid ${colors.paprika};">
+                        <h3 style="color: ${colors.teal}; margin-bottom: 12px;">📋 The Situation</h3>
+                        <p style="margin: 0; font-size: 16px; line-height: 1.6;">${scenario.situation}</p>
+                    </div>
+
+                    <div style="background: ${colors.yellow}; padding: 20px; border-radius: 12px; margin-bottom: 24px; border-left: 4px solid ${colors.orange};">
+                        <h3 style="color: ${colors.teal}; margin-bottom: 12px;">🎯 Your Challenge</h3>
+                        <p style="margin: 0; font-size: 16px; line-height: 1.6;">${scenario.challenge}</p>
+                    </div>
+
+                    <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 2px solid ${colors.teal};">
+                        <h3 style="color: ${colors.teal}; margin-bottom: 12px;">💡 Pro Tips</h3>
+                        ${scenario.tips.map(tip => `
+                            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                <span style="color: ${colors.orange};">•</span>
+                                <span>${tip}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <form onsubmit="submitScenario(event, ${scenarioId})">
+                        <div class="form-group">
+                            <label style="font-size: 18px; color: ${colors.teal};">✍️ ${scenario.prompt}</label>
+                            <textarea 
+                                name="response" 
+                                required
+                                placeholder="Write your detailed response here... Be specific about what you say, your tone, your body language, and how you handle the situation step by step."
+                            ></textarea>
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class="btn btn-primary" 
+                            style="width: 100%; padding: 20px; font-size: 18px;"
+                            ${isComplete ? 'disabled' : ''}
+                        >
+                            ${isComplete ? '✓ Already Completed' : `Submit & Earn ${scenario.points} Points`}
+                        </button>
+                    </form>
+                </div>
+            `;
+        }
+
+        function renderLeaderboard() {
+            const leaderboard = userManager.getLeaderboard();
+
+            return `
+                ${renderNavBar()}
+
+                <div class="header-stats">
+                    <h1 style="margin: 0 0 8px 0; font-size: 28px;">🏆 Leaderboard</h1>
+                    <p style="margin: 0; opacity: 0.9;">See who's dominating the training game!</p>
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    ${leaderboard.map(user => {
+                        const rankClass = user.rank === 1 ? 'gold' : user.rank === 2 ? 'silver' : user.rank === 3 ? 'bronze' : '';
+                        const rankIcon = user.rank === 1 ? '🥇' : user.rank === 2 ? '🥈' : user.rank === 3 ? '🥉' : `#${user.rank}`;
+                        const isCurrentUser = user.id === userManager.currentUser.id;
+
+                        return `
+                            <div class="leaderboard-item" style="${isCurrentUser ? `border: 3px solid ${colors.orange};` : ''}">
+                                <div class="leaderboard-rank ${rankClass}">
+                                    ${rankIcon}
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 20px; font-weight: bold; color: ${colors.teal};">
+                                        ${user.name} ${isCurrentUser ? '(You)' : ''}
+                                    </div>
+                                    <div style="font-size: 14px; color: #666; margin-top: 4px;">
+                                        ${user.badges[user.badges.length - 1]}
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 32px; font-weight: bold; color: ${colors.orange};">
+                                        ${user.points}
+                                    </div>
+                                    <div style="font-size: 12px; color: #666;">points</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+
+                ${leaderboard.length === 0 ? `
+                    <div style="text-align: center; padding: 60px 20px; color: ${colors.sage};">
+                        <div style="font-size: 64px; margin-bottom: 16px;">🎯</div>
+                        <h3>No one on the leaderboard yet!</h3>
+                        <p>Be the first to complete training and claim the top spot!</p>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        // Event Handlers
+        function toggleAuth() {
+            currentView = currentView === 'auth' ? 'login' : 'auth';
+            render();
+        }
+
+        function handleAuth() {
+            const email = document.getElementById('auth-email').value;
+            const isLogin = currentView === 'login';
+
+            if (isLogin) {
+                const result = userManager.login(email);
+                if (result.success) {
+                    currentView = 'home';
+                    currentTab = 'training';
+                    render();
+                } else {
+                    alert(result.message);
+                }
+            } else {
+                const name = document.getElementById('auth-name').value;
+                const result = userManager.register(name, email);
+                if (result.success) {
+                    currentView = 'home';
+                    currentTab = 'training';
+                    showNotification(`Welcome aboard, ${name}! 🎉`);
+                    render();
+                } else {
+                    alert(result.message);
+                }
+            }
+        }
+
+        function logout() {
+            userManager.logout();
+            currentView = 'auth';
+            render();
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            currentModuleId = null;
+            currentQuizId = null;
+            currentScenarioId = null;
+            render();
+        }
+
+        function openModule(moduleId) {
+            currentModuleId = moduleId;
+            render();
+        }
+
+        function backToTraining() {
+            currentModuleId = null;
+            render();
+        }
+
+        function submitQuestionnaire(event, moduleId) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const module = trainingModules.find(m => m.id === moduleId);
+            
+            // Validate word counts for text answers
+            let valid = true;
+            module.questionnaire.forEach((question, idx) => {
+                if (question.type === 'text') {
+                    const answer = formData.get(`q${idx}`);
+                    const wordCount = answer.trim().split(/\s+/).length;
+                    if (wordCount < question.minWords) {
+                        alert(`Question ${idx + 1} needs at least ${question.minWords} words. You have ${wordCount}.`);
+                        valid = false;
+                    }
+                }
+            });
+
+            if (!valid) return;
+
+            // Validate multiple choice
+            let correctCount = 0;
+            module.questionnaire.forEach((question, idx) => {
+                if (question.type === 'multiple') {
+                    const answer = formData.get(`q${idx}`);
+                    if (answer === question.correct) {
+                        correctCount++;
+                    }
+                }
+            });
+
+            // Save submission
+            const submission = {
+                moduleId,
+                timestamp: new Date().toISOString(),
+                answers: Array.from(formData.entries())
+            };
+
+            userManager.currentUser.submissions.push(submission);
+            userManager.currentUser.completedModules.push(moduleId);
+            userManager.addPoints(module.points, module.title);
+            
+            alert(`Congratulations! You earned ${module.points} points! 🎉`);
+            backToTraining();
+        }
+
+        function startQuiz(quizId) {
+            currentQuizId = quizId;
+            currentQuizQuestion = 0;
+            quizAnswers = [];
+            render();
+        }
+
+        function backToQuizzes() {
+            currentQuizId = null;
+            currentQuizQuestion = 0;
+            quizAnswers = [];
+            render();
+        }
+
+        function answerQuiz(quizId, answer) {
+            const quiz = quizzes.find(q => q.id === quizId);
+            const question = quiz.questions[currentQuizQuestion];
+            
+            quizAnswers.push(answer);
+
+            // Visual feedback
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(option => {
+                option.disabled = true;
+                if (option.textContent.trim() === answer) {
+                    if (answer === question.a) {
+                        option.classList.add('correct');
+                    } else {
+                        option.classList.add('incorrect');
+                    }
+                }
+                if (option.textContent.trim() === question.a) {
+                    option.classList.add('correct');
+                }
+            });
+
+            setTimeout(() => {
+                if (currentQuizQuestion < quiz.questions.length - 1) {
+                    currentQuizQuestion++;
+                    render();
+                } else {
+                    // Calculate score
+                    const score = quizAnswers.filter((ans, idx) => ans === quiz.questions[idx].a).length;
+                    const percentage = (score / quiz.questions.length * 100);
+                    
+                    if (percentage >= 80) {
+                        userManager.currentUser.completedQuizzes.push(quizId);
+                        userManager.addPoints(quiz.points, quiz.title);
+                    }
+                    
+                    // Show results
+                    document.getElementById('app').innerHTML = renderQuizResults(quizId, score);
+                }
+            }, 1500);
+        }
+
+        function openScenario(scenarioId) {
+            currentScenarioId = scenarioId;
+            render();
+        }
+
+        function backToRolePlay() {
+            currentScenarioId = null;
+            render();
+        }
+
+        function submitScenario(event, scenarioId) {
+            event.preventDefault();
+            const form = event.target;
+            const response = form.response.value;
+            const scenario = rolePlayScenarios.find(s => s.id === scenarioId);
+
+            // Validate word count (rough check)
+            const wordCount = response.trim().split(/\s+/).length;
+            if (wordCount < 30) {
+                alert('Please provide a more detailed response (at least 30 words)');
+                return;
+            }
+
+            // Save submission
+            const submission = {
+                scenarioId,
+                timestamp: new Date().toISOString(),
+                response
+            };
+
+            userManager.currentUser.submissions.push(submission);
+            userManager.currentUser.completedScenarios.push(scenarioId);
+            userManager.addPoints(scenario.points, scenario.title);
+            
+            alert(`Amazing work! You earned ${scenario.points} points! 🎉`);
+            backToRolePlay();
+        }
+
+        // Main Render Function
+        function render() {
+            const app = document.getElementById('app');
+            
+            if (!userManager.currentUser) {
+                app.innerHTML = renderAuth();
+                return;
+            }
+
+            let content = '';
+
+            if (currentModuleId) {
+                content = renderModuleDetail(currentModuleId);
+            } else if (currentQuizId) {
+                content = renderQuizDetail(currentQuizId);
+            } else if (currentScenarioId) {
+                content = renderScenarioDetail(currentScenarioId);
+            } else {
+                switch (currentTab) {
+                    case 'training':
+                        content = renderTrainingHome();
+                        break;
+                    case 'quizzes':
+                        content = renderQuizzes();
+                        break;
+                    case 'roleplay':
+                        content = renderRolePlay();
+                        break;
+                    case 'leaderboard':
+                        content = renderLeaderboard();
+                        break;
+                    default:
+                        content = renderTrainingHome();
+                }
+            }
+
+            app.innerHTML = `<div class="container">${content}</div>`;
+        }
+
+        // Initialize
+        render();
+    </script>
+</body>
+</html>
